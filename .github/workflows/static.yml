@@ -32,34 +32,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-     - name: Setup Node.js
-  uses: actions/setup-node@v4
-  with:
-    node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-- name: Clear npm cache
-  run: npm cache clean --force
+      - name: Clear npm cache
+        run: npm cache clean --force
 
-- name: Remove lock and node_modules
-  run: rm -rf package-lock.json node_modules
+      - name: Remove package-lock.json and node_modules
+        run: |
+          rm -rf package-lock.json node_modules
 
-- name: Install dependencies
-  run: npm ci
+      - name: Install dependencies
+        run: npm ci --verbose
 
-- name: Lint
-  run: npm run lint
+      - name: Run TypeScript type check
+        run: npm run lint
 
-- name: Build
-  run: npm run build
+      - name: Build
+        run: npm run build
 
-- name: Setup Pages
-  uses: actions/configure-pages@v5
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-- name: Upload artifact
-  uses: actions/upload-pages-artifact@v3
-  with:
-    path: './dist'
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload only the built dist folder
+          path: './dist'
 
-- name: Deploy to GitHub Pages
-  id: deployment
-  uses: actions/deploy-pages@v5
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
